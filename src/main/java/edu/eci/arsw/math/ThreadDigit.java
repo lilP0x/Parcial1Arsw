@@ -1,39 +1,32 @@
 package edu.eci.arsw.math;
 
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicLongArray;
 
-///  <summary>
-///  An implementation of the Bailey-Borwein-Plouffe formula for calculating hexadecimal
-///  digits of pi.
-///  https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula
-///  *** Translated from C# code: https://github.com/mmoroney/DigitsOfPi ***
-///  </summary>
-public class PiDigits {
+public class ThreadDigit extends Thread{
 
     private static int DigitsPerSum = 8;
     private static double Epsilon = 1e-17;
 
-    private static ArrayList<ThreadDigit> hilos = new ArrayList<>();
+    private int start;
+
+    private int count;
+
+    private byte[] digitsA = new byte[count];
 
 
+    public ThreadDigit(int start, int count){
+        this.start = start;
+        this.count = count;
 
 
-    
-    /**
-     * Returns a range of hexadecimal digits of pi.
-     * @param start The starting location of the range.
-     * @param count The number of digits to return
-     * @return An array containing the hexadecimal digits.
-     */
-    public static byte[] getDigits(int start, int count) {
-        if (start < 0) {
-            throw new RuntimeException("Invalid Interval");
-        }
+    }
 
-        if (count < 0) {
-            throw new RuntimeException("Invalid Interval");
-        }
+    @Override
+    public void run() {
+        digitsA = getDigits();
+    }
+
+    public byte[] getDigits(){
 
         byte[] digits = new byte[count];
         double sum = 0;
@@ -50,45 +43,6 @@ public class PiDigits {
 
             sum = 16 * (sum - Math.floor(sum));
             digits[i] = (byte) sum;
-        }
-
-        return digits;
-    }
-    /**
-     * Returns a range of hexadecimal digits of pi.
-     * @param start The starting location of the range.
-     * @param count The number of digits to return.
-     * @param threads The number of thread we are going to create.
-     * @return An array containing the hexadecimal digits.
-     */
-
-    public static byte[] getDigits(int start, int count, int threads ) {
-        if (start < 0) {
-            throw new RuntimeException("Invalid Interval");
-        }
-
-        if (count < 0) {
-            throw new RuntimeException("Invalid Interval");
-        }
-
-        int interval = count/threads;
-
-        for (int i=0; i<threads; i++){
-            if (threads % 2 ==0) {
-                ThreadDigit t = new ThreadDigit(start, count);
-                hilos.add(t);
-                t.start();
-            }
-        }
-
-
-        byte[] digits = new byte[count];
-        double sum = 0;
-
-        int i = 0;
-        for (ThreadDigit t : hilos){
-            byte[] aux = t.getDigits();
-            digits[i+1] = aux[i+1];
         }
 
         return digits;
@@ -156,5 +110,4 @@ public class PiDigits {
 
         return result;
     }
-
 }
