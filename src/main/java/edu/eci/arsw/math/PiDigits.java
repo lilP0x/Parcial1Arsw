@@ -1,6 +1,7 @@
 package edu.eci.arsw.math;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLongArray;
 
 ///  <summary>
@@ -72,10 +73,20 @@ public class PiDigits {
         }
 
         int interval = count/threads;
+        int newStart = start+interval;
 
         for (int i=0; i<threads; i++){
-            if (threads % 2 ==0) {
-                ThreadDigit t = new ThreadDigit(start, count);
+            if(i == 0){
+                ThreadDigit t = new ThreadDigit(start, interval);
+                hilos.add(t);
+                t.start();
+            }
+            if (threads % 2 == 0) {
+                ThreadDigit t = new ThreadDigit(newStart, interval);
+                hilos.add(t);
+                t.start();
+            }else {
+                ThreadDigit t = new ThreadDigit(newStart, interval);
                 hilos.add(t);
                 t.start();
             }
@@ -83,12 +94,12 @@ public class PiDigits {
 
 
         byte[] digits = new byte[count];
-        double sum = 0;
 
-        int i = 0;
+
         for (ThreadDigit t : hilos){
-            byte[] aux = t.getDigits();
-            digits[i+1] = aux[i+1];
+            byte[] aux = t.getDigitsA();
+            System.out.println(Arrays.toString(aux));
+            return aux;
         }
 
         return digits;

@@ -26,6 +26,10 @@ public class ThreadDigit extends Thread{
         digitsA = getDigits();
     }
 
+    public byte[] getDigitsA(){
+        return digitsA;
+    }
+
     public byte[] getDigits(){
 
         byte[] digits = new byte[count];
